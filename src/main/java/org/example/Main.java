@@ -1,8 +1,10 @@
 package org.example;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.example.model.Staff;
 import org.example.model.Citizen;
 import org.example.model.Doctor;
+import org.example.model.Appointment;
 
 
 
@@ -30,7 +32,14 @@ public class Main {
         System.out.println("First Name: " +doctor.getFirstName());
         System.out.println("Last Name: "+doctor.getLastName());
         System.out.println("Doctor ID: " +doctor.getDoctorId());
-        }
 
 
+     // APPOINTMENT
+    Appointment appointment = new Appointment("APPT001", citizen, doctor, LocalDateTime.of(2024, 6, 15, 10, 30), "Pfizer");
+    System.out.println("APPOINTMENT: ");
+    System.out.println("Appointment ID: "+appointment.getAppointmentId());
+    System.out.println("Citizen First Name: "+ appointment.getCitizen().getFirstName());
+    System.out.println("Doctor Last Name: "+appointment.getDoctor().getLastName());
+    System.out.println("Date and Time: "+appointment.getDateTime());
+}
     }
