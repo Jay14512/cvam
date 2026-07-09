@@ -18,7 +18,7 @@ public class Main {
         System.out.println("Corresponding Doctor ID: "+staff.getDoctorId());
 
         // CITIZEN
-        Citizen citizen = new Citizen("Mario", "Rossi", "RSSMRA80A01H501Z", "mario@rossi.com", "003928974156", LocalDate.of(1968,6,8));
+        Citizen citizen = new Citizen("Mario", "Rossi", "RSSMRA80A01H501Z", "mario@rossi.com", "+3928974156", LocalDate.of(1968,6,8));
         System.out.println("CITIZEN: ");
         System.out.println("First Name: " +citizen.getFirstName());
         System.out.println("Fiscal Code: " +citizen.getFiscalCode());
@@ -41,5 +41,7 @@ public class Main {
     System.out.println("Citizen First Name: "+ appointment.getCitizen().getFirstName());
     System.out.println("Doctor Last Name: "+appointment.getDoctor().getLastName());
     System.out.println("Date and Time: "+appointment.getDateTime());
+
+
 }
     }
