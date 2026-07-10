@@ -116,3 +116,45 @@ src/main/java/org/example/
   - If free, add to the list
 - Test it from `Main` with a deliberate conflict to prove the check works
 
+---
+
+## Session 4 — July 10, 2026
+
+### What we built
+- Implemented `AppointmentService` with full booking logic
+- `bookAppointment(Appointment appointment)` — checks for doctor + time slot conflict before adding
+- `getAppointments()` — returns the full internal list
+- `getAppointmentsForCitizen(String fiscalCode)` — filters appointments by citizen's unique fiscal code
+- Refactored `Main` to use the service instead of a manual `ArrayList`
+- Tested conflict detection — confirmed `IllegalArgumentException` fires on duplicate doctor + time
+- Tested filter method — correctly returns only Mario's appointment when queried by fiscal code
+
+### Key concepts learned
+- Class fields vs constructor vs methods — fields live at the top, outside methods, for the object's whole life
+- A getter lives where the data lives — `getAppointments()` belongs in `AppointmentService` because that's where the list is
+- `==` compares object references in Java; `.equals()` compares values — always use `.equals()` for objects
+- Java has no `===` because it's strictly typed — type mismatches are caught at compile time
+- Filtering a list: create empty `result` list → loop → check condition → add matches → return result
+- Unique identifiers (like `fiscalCode`) should be used to look up people, not names or birthdates
+- Data travels with the object — each `Appointment` carries its own `Citizen` and `Doctor` inside it
+
+### All files location
+```
+src/main/java/org/example/
+    Main.java
+    model/
+        User.java         (abstract)
+        Citizen.java
+        Doctor.java
+        Staff.java
+        Appointment.java
+    service/
+        AppointmentService.java
+```
+
+### Next session — pick up here
+- Add `getAppointmentsForDoctor(String doctorId)` — same filter pattern, different field
+- Think about `cancelAppointment` — how do you remove from a list in Java?
+- Consider adding a `toString()` method to `Appointment` for cleaner printing
+- Eventually: `try/catch` in `Main` to handle exceptions gracefully instead of crashing
+
