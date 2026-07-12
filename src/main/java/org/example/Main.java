@@ -28,7 +28,7 @@ public class Main {
         // DOCTOR
         Doctor doctor1 = new Doctor("Giovanni", "Verdi", "VRDGVN70A01H501Z", "giovanni@dottore.it", "556987");
         Doctor doctor2 = new Doctor("Francesca", "Neri", "NRIFNC80A01H501Z", "francesca@dottore.it", "556988");
-
+        Doctor doctor3 = new Doctor("Luca", "Rossi", "RSSLCU90A01H501Z", "luca@dottore.it", "556989");
 
         // APPOINTMENT
         Appointment appointment1 = new Appointment("APPT001", citizen1, doctor1, LocalDateTime.of(2024, 6, 15, 10, 30), "Pfizer");
@@ -57,6 +57,19 @@ public class Main {
             System.out.println(appt.getAppointmentId());
             System.out.println(appt.getDateTime());
             System.out.println(appt.getDoctor().getLastName());
+        }
+
+
+        System.out.print("\nDr. Verdi's appointments: ");
+        for (Appointment appt : service.getAppointmentsForDoctor("556987")){
+            System.out.println(appt.getAppointmentId());
+            System.out.println(appt.getDateTime());
+        }
+
+        System.out.print("\nDr. Neri's appointments: ");
+        for (Appointment appt : service.getAppointmentsForDoctor("556988")){
+            System.out.println(appt.getAppointmentId());
+            System.out.println(appt.getDateTime());
         }
 
     }

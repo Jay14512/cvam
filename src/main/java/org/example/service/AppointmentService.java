@@ -3,6 +3,7 @@ package org.example.service;
 import org.example.model.Appointment;
 
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,11 @@ public class AppointmentService {
         appointments.add(appointment);
     }
 
+    public void cancelAppointment(Appointment appointment){
+        //Check if Appointment exists
+
+    }
+
     public List<Appointment> getAppointments(){
         return appointments;
     }
@@ -33,4 +39,18 @@ public class AppointmentService {
         }
         return result;
     }
+
+
+    public List<Appointment> getAppointmentsForDoctor(String doctorId){
+        List<Appointment> result = new ArrayList<>();
+        //Show appointments for a specific doctor
+        for (Appointment appointment : appointments){
+            if (appointment.getDoctor().getDoctorId().equals(doctorId)){
+                result.add(appointment);
+            }
+        }
+        return result;
+    }
+
+
 }
