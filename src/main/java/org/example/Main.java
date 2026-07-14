@@ -14,10 +14,7 @@ public class Main {
     public static void main(String[] args) {
         // STAFF
         Staff staff = new Staff("Anna", "Bianchi", "BNCANN90A41H501Z", "anna@clinic.com", "336124", "556987");
-       /* System.out.println("STAFF:");
-        System.out.println("First Name: " +staff.getFirstName());
-        System.out.println("Staff ID: " +staff.getStaffCode());
-        System.out.println("Corresponding Doctor ID: "+staff.getDoctorId());*/
+
 
         // CITIZEN
         Citizen citizen1 = new Citizen("Mario", "Rossi", "RSSMRA80A01H501Z", "mario@rossi.com", "+3928974156", LocalDate.of(1968, 6, 8));
@@ -47,15 +44,27 @@ public class Main {
         service.bookAppointment(appointment3);
 
         //Cancel Appointment
-        service.cancelAppointment("APPT002");
-      ;
+        //Existing Appt
+        try {
+            service.cancelAppointment("APPT002");
+            System.out.println("Appointment APPT002 canceled successfully.");
+        } catch (IllegalArgumentException e)
+        {
+            System.out.println("Could not cancel appointment: "+e.getMessage());
+        }
+        //Non existing Appt
+        try{
+            service.cancelAppointment("APPT999");
+            System.out.println("Appointment  APPT999 canceled successfully.");
+        }  catch (IllegalArgumentException e) {
+            System.out.println("Could not cancel appointment: "+e.getMessage());
+        }
+
+
 
 //New Appointments
-        for (Appointment appt : service.getAppointments()) {
-//            System.out.println("Appointment ID: " + appt.getAppointmentId());
-//            System.out.println("Citizen: " + appt.getCitizen().getFirstName());
-//            System.out.println("Doctor: " + appt.getDoctor().getLastName());
-        }
+
+
         System.out.print("\nMario's appointments: ");
         for (Appointment appt : service.getAppointmentsForCitizen("RSSMRA80A01H501Z")) {
             System.out.println(appt.getAppointmentId());
@@ -65,13 +74,13 @@ public class Main {
 
 
         System.out.print("\nDr. Verdi's appointments: ");
-        for (Appointment appt : service.getAppointmentsForDoctor("556987")){
+        for (Appointment appt : service.getAppointmentsForDoctor("556987")) {
             System.out.println(appt.getAppointmentId());
             System.out.println(appt.getDateTime());
         }
 
         System.out.print("\nDr. Neri's appointments: ");
-        for (Appointment appt : service.getAppointmentsForDoctor("556988")){
+        for (Appointment appt : service.getAppointmentsForDoctor("556988")) {
             System.out.println(appt.getAppointmentId());
             System.out.println(appt.getDateTime());
         }

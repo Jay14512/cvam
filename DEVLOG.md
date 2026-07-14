@@ -209,3 +209,35 @@ Doctor filtering is working and tested. Repository is public with documentation 
 - Remove unused import and do small cleanup (`appointments` can be `final`)
 - Evaluate switching cancel logic to `cancelAppointment(String appointmentId)` for ID-based behavior
 - Add basic tests under `src/test/java` for booking conflict, doctor filter, and cancellation
+
+---
+
+## Session 7 — July 14, 2026 (part 2)
+
+### What we built
+- Refactored cancellation logic to ID-based behavior: `cancelAppointment(String appointmentId)` in `AppointmentService`
+- Implemented list traversal with index-based removal and early method exit when a match is found
+- Added first `try/catch` blocks in `Main` to handle cancellation outcomes without crashing
+- Tested both cancellation paths:
+  - Existing appointment (`APPT002`) -> successful cancellation message
+  - Non-existing appointment (`APPT999`) -> graceful error message
+
+### Key concepts learned
+- ID-based operations are more realistic than object-reference-based operations for business actions
+- `try/catch` lets the program continue running after expected failures
+- Throw in service layer, catch in caller (`Main`) is a clean separation of responsibilities
+- Remove-from-list while iterating is safest with index-based loop in this learning stage
+
+### Current status
+- `AppointmentService` now includes:
+  - `bookAppointment(Appointment appointment)`
+  - `cancelAppointment(String appointmentId)`
+  - `getAppointments()`
+  - `getAppointmentsForCitizen(String fiscalCode)`
+  - `getAppointmentsForDoctor(String doctorId)`
+- `Main` demonstrates both success and failure flows for cancellation using `try/catch`
+
+### Next session — pick up here
+- Clean output formatting in `Main` (keep only behavior-verification prints)
+- Add basic tests under `src/test/java` for conflict booking, doctor filter, and cancel by ID
+- Start planning a light CLI-style interaction layer before moving to Spring Boot
