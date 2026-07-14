@@ -158,3 +158,54 @@ src/main/java/org/example/
 - Consider adding a `toString()` method to `Appointment` for cleaner printing
 - Eventually: `try/catch` in `Main` to handle exceptions gracefully instead of crashing
 
+
+---
+
+## Session 5 — July 12, 2026
+
+### What we built
+- Published the repository publicly to showcase the Java transition and current project level
+- Added a recruiter-friendly `README.md` that explains project purpose, current features, and roadmap
+- Added `LICENSE` (MIT) at project root and linked license info in the README
+- Implemented `getAppointmentsForDoctor(String doctorId)` in `AppointmentService`
+- Verified doctor filtering behavior from `Main` for both matching and non-matching doctor IDs
+
+### Key concepts learned
+- Public portfolio repos can be intentionally marked as WIP and still be valuable for recruiters
+- `doctorId` is the correct unique identifier for doctor-based lookup (same pattern as citizen filtering by fiscal code)
+- Method-local variables (`result`) are scoped per method and must be declared in each method
+- Compile and run are separate checks: compile validates syntax/types, run validates behavior
+
+### Where we left off
+Doctor filtering is working and tested. Repository is public with documentation and license in place.
+
+### Next session — pick up here
+- Add `cancelAppointment(...)` in `AppointmentService`
+- Decide whether cancellation should be by object or by `appointmentId`
+- Test success and not-found cancellation scenarios in `Main`
+
+---
+
+## Session 6 — July 14, 2026
+
+### What we built
+- Set up Maven on Windows and verified local build commands (`mvn -v`, `mvn clean compile`)
+- Practiced full manual build flow to understand what Maven automates (`javac`, classpath run, manual jar creation)
+- Implemented `cancelAppointment(Appointment appointment)` in `AppointmentService`
+- Wired cancellation call in `Main` and verified the app compiles/runs cleanly
+
+### Key concepts learned
+- Maven is not a framework; it automates build/test/package tasks but does not replace Core Java logic
+- Manual compile loop is useful for fundamentals, Maven is useful for repeatable workflow
+- Common Java bug pattern: `=` vs `==` in `if` conditions
+- `List.remove(...)` returns a boolean indicating whether an element was actually removed
+
+### Current status
+- `bookAppointment`, `getAppointments`, `getAppointmentsForCitizen`, `getAppointmentsForDoctor`, and `cancelAppointment` are present in `AppointmentService`
+- Build currently succeeds with `mvn clean compile`
+- Remaining warning: unused `import java.sql.Array;` in `AppointmentService`
+
+### Next session — pick up here
+- Remove unused import and do small cleanup (`appointments` can be `final`)
+- Evaluate switching cancel logic to `cancelAppointment(String appointmentId)` for ID-based behavior
+- Add basic tests under `src/test/java` for booking conflict, doctor filter, and cancellation

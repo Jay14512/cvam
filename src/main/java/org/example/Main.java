@@ -46,6 +46,10 @@ public class Main {
         service.bookAppointment(appointment2);
         service.bookAppointment(appointment3);
 
+        //Cancel Appointment
+        service.cancelAppointment("APPT002");
+      ;
+
 //New Appointments
         for (Appointment appt : service.getAppointments()) {
 //            System.out.println("Appointment ID: " + appt.getAppointmentId());
