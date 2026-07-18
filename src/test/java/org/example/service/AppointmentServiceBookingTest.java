@@ -14,4 +14,50 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class AppointmentServiceBookingTest {
+    private AppointmentService service;
+    private Doctor doctor;
+    private Citizen citizen1;
+    private Citizen citizen2;
+
+    @BeforeEach
+    public void setUp() {
+        //Create a fresh service before each test
+        service = new AppointmentService();
+
+        //Create reusable test objects
+        doctor = new Doctor("Giovanni", "Verdi", "VRDGVN70A01H501Z", "giovanni@dottore.it", "556987");
+        citizen1 = new Citizen("Mario", "Rossi", "RSSMRA70A01H501Z", "mario.rossi@example.com", "+3928974156", LocalDate.of(1968, 6, 8));
+        citizen2 = new Citizen("Luigi", "Verdi", "VRDLGU75A01H501Z", "luigi@verdi.com", "+3928974157", LocalDate.of(1975, 1, 1));
+    }
+
+    @Test
+    public void testBookAppointmentSuccess() {
+        //Arrange: create an appointment
+        Appointment appointment = new Appointment("APPT001", citizen1, doctor, LocalDateTime.of(2024, 6, 15, 10, 30), "Pfizer");
+
+        //Act: book the appointment
+        service.bookAppointment(appointment);
+
+        //Assert: verify it was added
+        assertEquals(1, service.getAppointments().size());
+        assertEquals("APPT001", service.getAppointments().get(0).getAppointmentId());
+
+    }
+
+    @Test
+    public void testBookAppointmentConflictThrowsException() {
+        //Arrange: book one appointment
+        Appointment appointment1 = new Appointment("APPT001", citizen1, doctor, LocalDateTime.of(2024, 6, 15, 10, 30), "Pfizer");
+        service.bookAppointment(appointment1);
+
+        //Create a conflicting appointment (same doctor, same time)
+        Appointment appointment2 = new Appointment("APPT002", citizen2, doctor, LocalDateTime.of(2024, 6, 15, 10, 30), "Moderna");
+
+        //Act & Assert: verify exception is thrown
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.bookAppointment(appointment2);
+        });
+    }
+
+
 }

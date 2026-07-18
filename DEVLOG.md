@@ -241,3 +241,86 @@ Doctor filtering is working and tested. Repository is public with documentation 
 - Clean output formatting in `Main` (keep only behavior-verification prints)
 - Add basic tests under `src/test/java` for conflict booking, doctor filter, and cancel by ID
 - Start planning a light CLI-style interaction layer before moving to Spring Boot
+
+---
+
+## Session 8 — July 16, 2026
+
+### What we built
+- Created three test class skeletons with full JUnit5 setup:
+  - `AppointmentServiceBookingTest.java` — for testing `bookAppointment()` conflict logic
+  - `AppointmentServiceCancellationTest.java` — for testing `cancelAppointment()` success and failure
+  - `AppointmentServiceFilterTest.java` — for testing `getAppointmentsForCitizen()` and `getAppointmentsForDoctor()`
+- Set up proper imports in all test files: `@BeforeEach`, `@Test`, `assertEquals`, `assertThrows`
+- Test class bodies are empty scaffolds, ready for test method implementation
+
+### Key concepts learned
+- Test structure: one test class per service method or logical group
+- `@BeforeEach` runs setup code before each test (perfect for creating fresh test data)
+- `@Test` marks a method as a test that JUnit will automatically run
+- `assertEquals(expected, actual)` verifies behavior assertions
+- `assertThrows(ExceptionType.class, ...)` verifies exceptions are thrown under expected conditions
+- Tests live in separate source tree (`src/test/java`) and are not packaged with production code
+
+### All files location
+```
+src/main/java/org/example/
+    Main.java
+    model/
+        User.java         (abstract)
+        Citizen.java
+        Doctor.java
+        Staff.java
+        Appointment.java
+    service/
+        AppointmentService.java
+
+src/test/java/org/example/
+    service/
+        AppointmentServiceBookingTest.java      (empty, ready for methods)
+        AppointmentServiceCancellationTest.java (empty, ready for methods)
+        AppointmentServiceFilterTest.java       (empty, ready for methods)
+```
+
+### Next session — pick up here
+- Implement test methods in `AppointmentServiceBookingTest`:
+  - Test successful booking with no conflicts
+  - Test `IllegalArgumentException` when booking a conflicting doctor + time slot
+- Implement test methods in `AppointmentServiceCancellationTest`:
+  - Test successful cancellation by ID
+  - Test `IllegalArgumentException` when canceling non-existent ID
+- Implement test methods in `AppointmentServiceFilterTest`:
+  - Test `getAppointmentsForCitizen()` returns only the selected citizen's appointments
+  - Test `getAppointmentsForDoctor()` returns only the selected doctor's appointments
+- Run all tests with Maven (`mvn test`) to verify they pass
+
+---
+
+## Session 9 — July 18, 2026
+
+### What we built
+- Implemented `AppointmentServiceBookingTest` with two test methods:
+  - successful booking adds the appointment to the list
+  - conflicting booking (same doctor + same date/time) throws `IllegalArgumentException`
+- Implemented `AppointmentServiceCancellationTest` with two test methods:
+  - successful cancellation by ID removes only the targeted appointment
+  - canceling a non-existent ID throws `IllegalArgumentException`
+- Validated both test classes with Maven test selection for just booking + cancellation tests
+
+### Key concepts learned
+- `assertThrows(...)` must wrap the call that is expected to fail (inside the lambda)
+- Exception type must match service behavior exactly (`IllegalArgumentException` in this project)
+- In cancellation success tests, booking first is valid setup for the action under test
+- Stronger assertions check both list size and remaining/canceled appointment IDs
+
+### Current status
+- `AppointmentServiceBookingTest` and `AppointmentServiceCancellationTest` are implemented and passing
+- Verified run result: 4 tests executed, 0 failures, 0 errors
+- `AppointmentServiceFilterTest` is still scaffold-only and is the next implementation target
+
+### Next session — pick up here
+- Implement `AppointmentServiceFilterTest`:
+  - `getAppointmentsForCitizen(...)` should return only the selected citizen's appointments
+  - `getAppointmentsForDoctor(...)` should return only the selected doctor's appointments
+- Add clear appointment IDs in filter tests and assert expected IDs are returned
+- Run all tests together with `mvn test`
