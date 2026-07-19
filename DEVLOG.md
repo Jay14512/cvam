@@ -324,3 +324,40 @@ src/test/java/org/example/
   - `getAppointmentsForDoctor(...)` should return only the selected doctor's appointments
 - Add clear appointment IDs in filter tests and assert expected IDs are returned
 - Run all tests together with `mvn test`
+
+---
+
+## Session 10 — July 19, 2026
+
+### What we built
+- Completed `AppointmentServiceFilterTest` with six concrete test methods:
+  - `getAppointmentsForCitizen` with matches
+  - `getAppointmentsForCitizen` no matches (empty list)
+  - `getAppointmentsForCitizen` null input (throws)
+  - `getAppointmentsForDoctor` with matches
+  - `getAppointmentsForDoctor` no matches (empty list)
+  - `getAppointmentsForDoctor` null input (throws)
+- Added fail-fast null validation in `AppointmentService`:
+  - `getAppointmentsForCitizen(String fiscalCode)` now throws `IllegalArgumentException` when `fiscalCode` is null
+  - `getAppointmentsForDoctor(String doctorId)` now throws `IllegalArgumentException` when `doctorId` is null
+- Standardized assert style in filter tests using size checks + `allMatch(...)` ownership checks
+- Corrected vaccine-type typo in test fixtures (`Pfizer`)
+- Ran test suite locally; all tests reported as passing at end of session
+
+### Key concepts learned
+- "No matches" and "invalid input" are different scenarios and should be tested separately
+- Empty list is the right result for valid input with no data
+- `assertThrows(...)` should be used only when the service contract explicitly rejects input
+- Putting validation at the top of a method creates a clear, predictable API contract
+- Test naming works best when concise but scenario-specific (not only `...Success`)
+
+### Current status
+- `AppointmentService` now enforces null checks for both filtering methods
+- All three test classes are implemented (`Booking`, `Cancellation`, `Filter`)
+- You completed about 91 minutes of focused coding in this session
+
+### Next session — pick up here
+- Reduce fixture duplication in `AppointmentServiceFilterTest` with a small helper method
+- Decide whether `getAppointmentsForCitizen`/`getAppointmentsForDoctor` should return results sorted by date/time
+- If sorting is added, extend filter tests with deterministic order assertions
+

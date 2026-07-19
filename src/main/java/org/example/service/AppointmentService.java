@@ -19,11 +19,11 @@ public class AppointmentService {
         appointments.add(appointment);
     }
 
-    public void cancelAppointment(String appointmentId){
+    public void cancelAppointment(String appointmentId) {
         //Compare appointment IDs until a match is found or throw Error
-        for (int i=0; i< appointments.size(); i++){
+        for (int i = 0; i < appointments.size(); i++) {
             Appointment currentAppointment = appointments.get(i);
-            if (currentAppointment.getAppointmentId().equals(appointmentId)){
+            if (currentAppointment.getAppointmentId().equals(appointmentId)) {
                 appointments.remove(i);
                 return;
             }
@@ -37,6 +37,9 @@ public class AppointmentService {
     }
 
     public List<Appointment> getAppointmentsForCitizen(String fiscalCode) {
+        if (fiscalCode == null) {
+            throw new IllegalArgumentException("Fiscal Code cannot be null");
+        }
         List<Appointment> result = new ArrayList<>();
         //Show appointments for a specific citizen
         for (Appointment appointment : appointments) {
@@ -49,6 +52,9 @@ public class AppointmentService {
 
 
     public List<Appointment> getAppointmentsForDoctor(String doctorId) {
+        if (doctorId == null) {
+            throw new IllegalArgumentException("Doctor ID cannot be null");
+        }
         List<Appointment> result = new ArrayList<>();
         //Show appointments for a specific doctor
         for (Appointment appointment : appointments) {
