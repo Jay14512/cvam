@@ -34,118 +34,90 @@ public class AppointmentServiceFilterTest {
 
     }
 
+    private void bookAppointments(int... appointmentNumbers) {
+
+        for (int appointmentNumber : appointmentNumbers) {
+            Appointment appointment = switch (appointmentNumber) {
+                case 1 ->
+                        new Appointment("APPT001", citizen1, doctor1, LocalDateTime.of(2024, 3, 12, 11, 30), "Moderna");
+                case 2 ->
+                        new Appointment("APPT002", citizen2, doctor1, LocalDateTime.of(2024, 3, 13, 10, 30), "Pfizer");
+                case 3 ->
+                        new Appointment("APPT003", citizen1, doctor2, LocalDateTime.of(2024, 3, 8, 11, 45), "Moderna");
+                case 4 -> new Appointment("APPT004", citizen2, doctor2, LocalDateTime.of(2024, 3, 18, 9, 15), "Pfizer");
+                default -> throw new IllegalArgumentException("Unknown appointment number: " + appointmentNumber);
+            };
+            service.bookAppointment(appointment);
+
+        }
+
+    }
+
+
     @Test
     public void testGetAppointmentsForCitizen_WithMatches() {
-        //Arrange: create new appointments
-        Appointment appointment1 = new Appointment("APPT001", citizen1, doctor1, LocalDateTime.of(2024, 3, 12, 11, 30), "Moderna");
-        Appointment appointment2 = new Appointment("APPT002", citizen2, doctor1, LocalDateTime.of(2024, 3, 13, 10, 30), "Pfizer");
-        Appointment appointment3 = new Appointment("APPT003", citizen1, doctor2, LocalDateTime.of(2024, 3, 8, 11, 45), "Moderna");
-        Appointment appointment4 = new Appointment("APPT004", citizen2, doctor2, LocalDateTime.of(2024, 3, 18, 9, 15), "Pfizer");
-
-        //Act: book appointments
-        service.bookAppointment(appointment1);
-        service.bookAppointment(appointment2);
-        service.bookAppointment(appointment3);
-        service.bookAppointment(appointment4);
+        //Arrange: create and book 4 total appointments in system
+        bookAppointments(1, 2, 3, 4);
 
 
-        //Assert: citizen gets only their appointments
+        //Act: Invoke the specific filter method we want to test
         List<Appointment> result = service.getAppointmentsForCitizen(citizen1.getFiscalCode());
 
+        //Assert: citizen gets only their own appointments
         assertEquals(2, result.size());
         assertTrue(result.stream().allMatch(a -> a.getCitizen().getFiscalCode().equals(citizen1.getFiscalCode())));
-
-
     }
 
     @Test
     public void testGetAppointmentsForDoctor_WithMatches() {
-        //Arrange: create new appointments
-        Appointment appointment1 = new Appointment("APPT001", citizen1, doctor1, LocalDateTime.of(2024, 3, 12, 11, 30), "Moderna");
-        Appointment appointment2 = new Appointment("APPT002", citizen2, doctor1, LocalDateTime.of(2024, 3, 13, 10, 30), "Pfizer");
-        Appointment appointment3 = new Appointment("APPT003", citizen1, doctor2, LocalDateTime.of(2024, 3, 8, 11, 45), "Moderna");
-        Appointment appointment4 = new Appointment("APPT004", citizen2, doctor2, LocalDateTime.of(2024, 3, 18, 9, 15), "Pfizer");
-
-        //Act: book appointments
-        service.bookAppointment(appointment1);
-        service.bookAppointment(appointment2);
-        service.bookAppointment(appointment3);
-        service.bookAppointment(appointment4);
+        //Arrange: create and book 4 total appointments in system
+        bookAppointments(1, 2, 3, 4);
 
 
-        //Assert: doctor gets only their appointments
+        //Act: Invoke the specific filter method we want to test
         List<Appointment> result = service.getAppointmentsForDoctor(doctor1.getDoctorId());
 
+
+        //Assert: doctor gets only their own appointments
         assertEquals(2, result.size());
         assertTrue(result.stream().allMatch(a -> a.getDoctor().getDoctorId().equals(doctor1.getDoctorId())));
-
     }
 
     @Test
     public void testGetAppointmentsForCitizen_NoMatchesReturnsEmptyList() {
-        //Arrange: create new appointments
+        //Arrange: create and book 4 total appointments in system
+       bookAppointments(2, 4);
 
-        Appointment appointment2 = new Appointment("APPT002", citizen2, doctor2, LocalDateTime.of(2024, 3, 13, 10, 30), "Pfizer");
-        Appointment appointment4 = new Appointment("APPT004", citizen2, doctor2, LocalDateTime.of(2024, 3, 18, 9, 15), "Pfizer");
 
-        //Act: book appointments
-        service.bookAppointment(appointment2);
-        service.bookAppointment(appointment4);
+        //Act: Invoke the specific filter method we want to test
+        List<Appointment> result = service.getAppointmentsForCitizen(citizen1.getFiscalCode());
 
         //Assert: verify List is empty if no appointments for requested citizen booked
-        List<Appointment> result = service.getAppointmentsForCitizen(citizen1.getFiscalCode());
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void testGetAppointmentsForDoctor_NoMatchesReturnsEmptyList() {
-        //Arrange: create new appointments
+        //Arrange: create and book 4 total appointments in system
+       bookAppointments(3, 4);
 
-        Appointment appointment2 = new Appointment("APPT002", citizen2, doctor2, LocalDateTime.of(2024, 3, 13, 10, 30), "Pfizer");
-        Appointment appointment4 = new Appointment("APPT004", citizen2, doctor2, LocalDateTime.of(2024, 3, 18, 9, 15), "Pfizer");
 
-        //Act: book appointments
-        service.bookAppointment(appointment2);
-        service.bookAppointment(appointment4);
+        //Act: Invoke the specific filter method we want to test
+        List<Appointment> result = service.getAppointmentsForDoctor(doctor1.getDoctorId());
 
         //Assert: verify List is empty if no appointments for requested doctor booked
-        List<Appointment> result = service.getAppointmentsForDoctor(doctor1.getDoctorId());
         assertTrue(result.isEmpty());
     }
 
-
     @Test
     public void testGetAppointmentsForCitizen_NullCitizenThrowsException() {
-        //Arrange: create new appointments
-        Appointment appointment1 = new Appointment("APPT001", citizen1, doctor1, LocalDateTime.of(2024, 3, 12, 11, 30), "Moderna");
-        Appointment appointment2 = new Appointment("APPT002", citizen2, doctor1, LocalDateTime.of(2024, 3, 13, 10, 30), "Pfizer");
-        Appointment appointment3 = new Appointment("APPT003", citizen1, doctor2, LocalDateTime.of(2024, 3, 8, 11, 45), "Moderna");
-        Appointment appointment4 = new Appointment("APPT004", citizen2, doctor2, LocalDateTime.of(2024, 3, 18, 9, 15), "Pfizer");
-
-        //Act: book appointments
-        service.bookAppointment(appointment1);
-        service.bookAppointment(appointment2);
-        service.bookAppointment(appointment3);
-        service.bookAppointment(appointment4);
 
         //Assert: throws IllegalArgumentException when Citizen is null
         assertThrows(IllegalArgumentException.class, () -> service.getAppointmentsForCitizen(null));
     }
 
-
     @Test
     public void testGetAppointmentsForDoctor_NullDoctorThrowsException() {
-        //Arrange: create new appointments
-        Appointment appointment1 = new Appointment("APPT001", citizen1, doctor1, LocalDateTime.of(2024, 3, 12, 11, 30), "Moderna");
-        Appointment appointment2 = new Appointment("APPT002", citizen2, doctor1, LocalDateTime.of(2024, 3, 13, 10, 30), "Pfizer");
-        Appointment appointment3 = new Appointment("APPT003", citizen1, doctor2, LocalDateTime.of(2024, 3, 8, 11, 45), "Moderna");
-        Appointment appointment4 = new Appointment("APPT004", citizen2, doctor2, LocalDateTime.of(2024, 3, 18, 9, 15), "Pfizer");
-
-        //Act: book appointments
-        service.bookAppointment(appointment1);
-        service.bookAppointment(appointment2);
-        service.bookAppointment(appointment3);
-        service.bookAppointment(appointment4);
 
         //Assert: throws IllegalArgumentException when Doctor is null
         assertThrows(IllegalArgumentException.class, () -> service.getAppointmentsForDoctor(null));

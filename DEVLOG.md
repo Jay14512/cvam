@@ -357,7 +357,36 @@ src/test/java/org/example/
 - You completed about 91 minutes of focused coding in this session
 
 ### Next session — pick up here
-- Reduce fixture duplication in `AppointmentServiceFilterTest` with a small helper method
+- Reduce fixture duplication in `AppointmentServiceFilterTest` with a small helper method ✅ done in Session 11
+- Decide whether `getAppointmentsForCitizen`/`getAppointmentsForDoctor` should return results sorted by date/time
+- If sorting is added, extend filter tests with deterministic order assertions
+
+---
+
+## Session 11 — July 21, 2026
+
+### What we built
+- Refactored `AppointmentServiceFilterTest` with a private helper method `bookAppointments(int... appointmentNumbers)`
+- The helper maps numbers 1–4 to the four standard citizen/doctor combinations, books them into `service`, and replaced all repeated fixture setup in every test
+- Removed the `List` return value from the helper entirely after reasoning through the fact that no test actually needs the returned list — booking happens as a side effect of the method call
+- Removed unnecessary fixture setup from both null-input tests — those tests only check input validation, so no appointments need to be booked at all
+- All six tests still pass after refactoring
+
+### Key concepts learned
+- A private helper method inside a test class is just a regular method — it reduces duplication without changing test behavior
+- `int... appointmentNumbers` is Java varargs — lets you pass any number of int arguments like `bookAppointments(1, 2, 3, 4)` or `bookAppointments(2, 4)`
+- The return value of a method is optional to capture — if you never use it, you can drop the variable assignment entirely
+- A method that returns a value but whose caller never uses that return value is a signal to reconsider the return type
+- `void` is the right return type when a method's purpose is purely a side effect (like booking appointments)
+- Arrange block assertions (`assertEquals` on setup data) are usually noise — they test the helper, not the behavior under test; remove them
+- Tests should only assert the behavior named in the test method — nothing more
+
+### Current status
+- `AppointmentServiceFilterTest` is fully refactored: 128 lines down from 157, all six tests passing
+- The fixture helper `bookAppointments(int...)` centralises all appointment creation and booking in one place
+- You caught and fixed a subtle fixture error yourself: `testGetAppointmentsForDoctor_NoMatchesReturnsEmptyList` correctly uses appointments 3 and 4 (doctor2 only), not 2 and 4
+
+### Next session — pick up here
 - Decide whether `getAppointmentsForCitizen`/`getAppointmentsForDoctor` should return results sorted by date/time
 - If sorting is added, extend filter tests with deterministic order assertions
 
