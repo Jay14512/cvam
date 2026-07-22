@@ -390,3 +390,39 @@ src/test/java/org/example/
 - Decide whether `getAppointmentsForCitizen`/`getAppointmentsForDoctor` should return results sorted by date/time
 - If sorting is added, extend filter tests with deterministic order assertions
 
+---
+
+## Session 12 — July 22, 2026
+
+### What we built
+- Finalized API behavior for filtered retrieval: support caller-selected sort direction (`ascending`/`descending`)
+- Refactored both filter methods to overload style:
+  - `getAppointmentsForCitizen(String fiscalCode)` delegates to `getAppointmentsForCitizen(String fiscalCode, boolean ascending)`
+  - `getAppointmentsForDoctor(String doctorId)` delegates to `getAppointmentsForDoctor(String doctorId, boolean ascending)`
+- Centralized validation (`null` checks + `IllegalArgumentException`) inside the 2-arg methods
+- Implemented deterministic sorting by extracting `sortAppointments(List<Appointment> list, boolean ascending)`
+  - Primary key: `dateTime`
+  - Tie-breaker: `appointmentId`
+- Removed duplicate sorting blocks by using the shared private sort helper
+- Updated service field declaration to `private final List<Appointment> appointments = new ArrayList<>();`
+
+### Key concepts learned
+- Overload delegation pattern: 1-arg wrapper methods can provide defaults while 2-arg methods own the full logic
+- Validation should live in the implementation method to avoid duplication and behavior drift
+- Avoid recursive delegation loops (1-arg -> 2-arg is fine; 2-arg -> 1-arg causes recursion)
+- Comparator chaining with `thenComparing(...)` gives deterministic order for equal primary keys
+- IDE duplicated-code warnings are often refactor opportunities (helper extraction)
+
+### Current status
+- `AppointmentService` now supports directional sorting for citizen and doctor filters
+- Tie-breaker logic is present and shared through `sortAppointments(...)`
+- Session-level check: you reported local tests ran successfully after the refactor
+
+### Next session — pick up here
+- Update `AppointmentServiceFilterTest` to cover the new directional overloads:
+  - citizen ascending order assertion
+  - citizen descending order assertion
+  - doctor ascending/descending order assertions
+- Add deterministic order assertions based on exact appointment ID sequence
+- Add at least one tie-case assertion where feasible with current booking rules
+- Run full suite with `mvn test` and keep old 1-arg compatibility tests passing

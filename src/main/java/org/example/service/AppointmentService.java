@@ -3,10 +3,11 @@ package org.example.service;
 import org.example.model.Appointment;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class AppointmentService {
-    private List<Appointment> appointments = new ArrayList<>();
+    private final List<Appointment> appointments = new ArrayList<>();
 
     public void bookAppointment(Appointment appointment) {
         //Check if Appointment already exists
@@ -31,39 +32,74 @@ public class AppointmentService {
         throw new IllegalArgumentException("Appointment not found");
     }
 
+    private void sortAppointments(List<Appointment> list, boolean ascending) {
+        Comparator<Appointment> ascendingComparator =
+                Comparator.comparing(Appointment::getDateTime)
+                        .thenComparing(Appointment::getAppointmentId);
+
+        if (ascending) {
+            list.sort(ascendingComparator); //True: Oldest to newest
+        } else {
+            list.sort(
+                    Comparator.comparing(Appointment::getDateTime)
+                            .reversed()
+                            .thenComparing(Appointment::getAppointmentId) //False: Newest to oldest
+            );
+        }
+    }
 
     public List<Appointment> getAppointments() {
         return appointments;
     }
 
     public List<Appointment> getAppointmentsForCitizen(String fiscalCode) {
+        return getAppointmentsForCitizen(fiscalCode, true);
+    }
+
+    public List<Appointment> getAppointmentsForCitizen(String fiscalCode, boolean ascending) {
+        //VALIDATION
         if (fiscalCode == null) {
             throw new IllegalArgumentException("Fiscal Code cannot be null");
         }
-        List<Appointment> result = new ArrayList<>();
+
+        //FILTER
+        List<Appointment> filteredAppointments = new ArrayList<>();
         //Show appointments for a specific citizen
         for (Appointment appointment : appointments) {
             if (appointment.getCitizen().getFiscalCode().equals(fiscalCode)) {
-                result.add(appointment);
+                filteredAppointments.add(appointment);
             }
         }
-        return result;
+
+        //SORTING
+        sortAppointments(filteredAppointments, ascending);
+
+        return filteredAppointments;
     }
 
-
     public List<Appointment> getAppointmentsForDoctor(String doctorId) {
+        return getAppointmentsForDoctor(doctorId, true);
+    }
+
+    public List<Appointment> getAppointmentsForDoctor(String doctorId, boolean ascending) {
+        //VALIDATION
         if (doctorId == null) {
             throw new IllegalArgumentException("Doctor ID cannot be null");
         }
-        List<Appointment> result = new ArrayList<>();
+
+        //FILTER
+        List<Appointment> filteredAppointments = new ArrayList<>();
         //Show appointments for a specific doctor
         for (Appointment appointment : appointments) {
             if (appointment.getDoctor().getDoctorId().equals(doctorId)) {
-                result.add(appointment);
+                filteredAppointments.add(appointment);
             }
         }
-        return result;
-    }
 
+        //SORT
+        sortAppointments(filteredAppointments, ascending);
+
+        return filteredAppointments;
+    }
 
 }
