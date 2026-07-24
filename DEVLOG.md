@@ -392,6 +392,36 @@ src/test/java/org/example/
 
 ---
 
+## Session 13 — July 24, 2026
+
+### What we built
+- Added four new test methods to `AppointmentServiceFilterTest` covering the directional sort overloads:
+  - `testGetAppointmentsForCitizen_AscendingOrderReturnsOldestFirst` — calls 2-arg method with `true`, asserts APPT003 is first (March 8 < March 12)
+  - `testGetAppointmentsForCitizen_DescendingOrderReturnsNewestFirst` — calls 2-arg method with `false` for citizen2, asserts APPT004 is first (March 18 > March 13)
+  - `testGetAppointmentsForDoctor_AscendingOrderReturnsOldestFirst` — calls 2-arg method with `true`, asserts APPT001 is first (March 12 < March 13)
+  - `testGetAppointmentsForDoctor_DescendingOrderReturnsNewestFirst` — calls 2-arg method with `false` for doctor2, asserts APPT004 is first (March 18 > March 8)
+- All 10 tests in `AppointmentServiceFilterTest` pass
+
+### Key concepts learned
+- A test named `_WithMatches` should only fail for filtering reasons — sorting is a separate responsibility and belongs in a separate test
+- One test, one reason to fail: mixing filter correctness and sort order correctness into the same test creates misleading failure messages
+- For a 2-element list, asserting `getFirst()` is sufficient — if the first is correct, the second must be correct by elimination
+- The larger a list could grow, the weaker a single-element assertion becomes — full sequence assertions become more valuable with more data
+- `assertEquals(expected, actual)` is cleaner than `assertTrue(...equals(...))` for value comparisons — failure messages are more informative
+- The tie-breaker (`thenComparing(appointmentId)`) is currently untested because no fixture has two appointments at the exact same `LocalDateTime`
+
+### Current status
+- `AppointmentServiceFilterTest` now has 10 tests covering: matches, no-matches, null input, ascending order, and descending order — for both citizen and doctor filters
+- Tie-breaker sort logic exists in the service but has no test coverage yet
+
+### Next session — pick up here
+- Add a tie-case test: two appointments for the same citizen with different doctors but the same `LocalDateTime`
+- Reason through whether the service booking rules allow this (same time, different doctors — does `bookAppointment` block it?)
+- If allowed, add case 5 (and possibly 6) to `bookAppointments` helper and write the tie assertion
+- Consider whether a tie-case is also needed for the doctor filter
+
+---
+
 ## Session 12 — July 22, 2026
 
 ### What we built

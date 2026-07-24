@@ -12,7 +12,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 public class AppointmentServiceFilterTest {
     private AppointmentService service;
     private Doctor doctor1;
@@ -69,6 +68,30 @@ public class AppointmentServiceFilterTest {
     }
 
     @Test
+    public void testGetAppointmentsForCitizen_AscendingOrderReturnsOldestFirst() {
+        //Arrange: create and book 4 total appointments in system
+        bookAppointments(1, 2, 3, 4);
+
+        //Act: Invoke the specific filter method we want to test
+        List<Appointment> result = service.getAppointmentsForCitizen(citizen1.getFiscalCode(), true);
+
+        //Assert: citizen gets only their own appointments in order asc
+        assertEquals("APPT003", result.getFirst().getAppointmentId());
+    }
+
+    @Test
+    public void testGetAppointmentsForCitizen_DescendingOrderReturnsNewestFirst(){
+        //Arrange: create and book 4 total appointments in system
+        bookAppointments(1,2,3,4);
+
+        //Act: Invoke the specific filter method we want to test
+        List<Appointment> result = service.getAppointmentsForCitizen(citizen2.getFiscalCode(), false);
+
+        //Assert: citizen gets only their own appointments in order desc
+        assertEquals("APPT004", result.getFirst().getAppointmentId());
+    }
+
+    @Test
     public void testGetAppointmentsForDoctor_WithMatches() {
         //Arrange: create and book 4 total appointments in system
         bookAppointments(1, 2, 3, 4);
@@ -83,10 +106,36 @@ public class AppointmentServiceFilterTest {
         assertTrue(result.stream().allMatch(a -> a.getDoctor().getDoctorId().equals(doctor1.getDoctorId())));
     }
 
+
+    @Test
+    public void testGetAppointmentsForDoctor_AscendingOrderReturnsOldestFirst() {
+        //Arrange: create and book 4 total appointments in system
+        bookAppointments(1, 2, 3, 4);
+
+        //Act: Invoke the specific filter method we want to test
+        List<Appointment> result = service.getAppointmentsForDoctor(doctor1.getDoctorId(), true);
+
+        //Assert: doctor gets only their own appointments in order asc
+        assertEquals("APPT001", result.getFirst().getAppointmentId());
+    }
+
+    @Test
+    public void testGetAppointmentsForDoctor_DescendingOrderReturnsNewestFirst() {
+        //Arrange: create and book 4 total appointments in system
+        bookAppointments(1,2,3,4);
+
+        //Act: Invoke the specific filter method we want to test
+        List<Appointment> result = service.getAppointmentsForDoctor(doctor2.getDoctorId(), false);
+
+        //Assert: doctor gets only their own appointments in order desc
+        assertEquals("APPT004", result.getFirst().getAppointmentId());
+
+    }
+
     @Test
     public void testGetAppointmentsForCitizen_NoMatchesReturnsEmptyList() {
         //Arrange: create and book 4 total appointments in system
-       bookAppointments(2, 4);
+        bookAppointments(2, 4);
 
 
         //Act: Invoke the specific filter method we want to test
@@ -99,7 +148,7 @@ public class AppointmentServiceFilterTest {
     @Test
     public void testGetAppointmentsForDoctor_NoMatchesReturnsEmptyList() {
         //Arrange: create and book 4 total appointments in system
-       bookAppointments(3, 4);
+        bookAppointments(3, 4);
 
 
         //Act: Invoke the specific filter method we want to test
