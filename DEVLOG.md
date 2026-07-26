@@ -439,7 +439,7 @@ src/test/java/org/example/
 ### Key concepts learned
 - Overload delegation pattern: 1-arg wrapper methods can provide defaults while 2-arg methods own the full logic
 - Validation should live in the implementation method to avoid duplication and behavior drift
-- Avoid recursive delegation loops (1-arg -> 2-arg is fine; 2-arg -> 1-arg causes recursion)
+- Avoid recursive delegation loops (1-arg → 2-arg is fine; 2-arg → 1-arg causes recursion)
 - Comparator chaining with `thenComparing(...)` gives deterministic order for equal primary keys
 - IDE duplicated-code warnings are often refactor opportunities (helper extraction)
 
@@ -450,9 +450,40 @@ src/test/java/org/example/
 
 ### Next session — pick up here
 - Update `AppointmentServiceFilterTest` to cover the new directional overloads:
-  - citizen ascending order assertion
-  - citizen descending order assertion
+  - citizen ascending/descending order assertion
   - doctor ascending/descending order assertions
 - Add deterministic order assertions based on exact appointment ID sequence
 - Add at least one tie-case assertion where feasible with current booking rules
 - Run full suite with `mvn test` and keep old 1-arg compatibility tests passing
+
+## Session 14 — July 26, 2026
+
+### What we built
+- Strengthened `AppointmentServiceFilterTest` to use deterministic order assertions with full appointment ID sequence checks (not only first element)
+- Added compatibility coverage for default 1-arg filter methods:
+  - `getAppointmentsForCitizen(String fiscalCode)` defaults to ascending order
+  - `getAppointmentsForDoctor(String doctorId)` defaults to ascending order
+- Expanded fixtures with a third citizen (`citizen3`) and two additional appointments:
+  - `APPT005` and `APPT006` share the same `LocalDateTime`
+- Added tie-case coverage to verify deterministic secondary ordering by `appointmentId` when date/time is identical
+- Kept existing match/no-match/null validation tests intact while extending directional sort coverage
+
+### Key concepts learned
+- Sequence assertions are stronger than single-position assertions for sorting behavior
+- Adding `assertEquals(expectedSize, result.size())` improves test robustness and makes failures clearer
+- Deterministic sorting tests should validate both:
+  - primary key ordering (`dateTime`)
+  - tie-break ordering (`appointmentId`)
+- Backward compatibility should be tested explicitly, not assumed (1-arg wrappers delegating to 2-arg overloads)
+- For larger datasets, avoid asserting hundreds of exact positions; prefer sortedness invariants + ownership + size + focused edge-case sequence checks
+
+### Current status
+- `AppointmentServiceFilterTest` now contains 13 tests
+- Full project test suite passes:
+  - `Tests run: 17, Failures: 0, Errors: 0, Skipped: 0`
+  - `BUILD SUCCESS`
+
+### Next session — pick up here
+- Optionally add descending-direction tie-case assertion for extra confidence in reverse ordering behavior
+- Consider small naming cleanup in null-input tests to reflect null ID/fiscal-code (instead of null object wording)
+- Evaluate extracting reusable helper assertions for expected ID order to keep tests concise as fixtures grow
