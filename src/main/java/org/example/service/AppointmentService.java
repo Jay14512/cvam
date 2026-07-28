@@ -43,7 +43,7 @@ public class AppointmentService {
             list.sort(
                     Comparator.comparing(Appointment::getDateTime)
                             .reversed()
-                            .thenComparing(Appointment::getAppointmentId) //False: Newest to oldest
+                            .thenComparing(Comparator.comparing(Appointment::getAppointmentId).reversed()) //False: Newest to oldest
             );
         }
     }

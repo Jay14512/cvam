@@ -487,3 +487,33 @@ src/test/java/org/example/
 - Optionally add descending-direction tie-case assertion for extra confidence in reverse ordering behavior
 - Consider small naming cleanup in null-input tests to reflect null ID/fiscal-code (instead of null object wording)
 - Evaluate extracting reusable helper assertions for expected ID order to keep tests concise as fixtures grow
+
+## Session 15 — July 28, 2026
+
+### What we built
+- Added descending-direction tie-case coverage in `AppointmentServiceFilterTest` to verify deterministic reverse ordering when `LocalDateTime` values are identical
+- Renamed null-input tests to reflect the actual invalid inputs (`null` fiscal code / `null` doctor ID) instead of object wording
+- Extracted reusable order assertions via `assertAppointmentOrder(List<Appointment> result, String... expectedIds)` to keep sort tests concise and scalable
+- Extended fixture helper usage with the existing case set (`1..6`) to keep test arrangement consistent across filter scenarios
+
+### Key concepts learned
+- Tie-case assertions should be checked in both sort directions to validate full comparator behavior
+- Test names should describe the invalid parameter, not the surrounding object, for clearer intent and faster debugging
+- Helper assertions reduce duplication while preserving strong sequence-level validation
+- Sequence assertions (`expected ID order`) are easier to maintain when test fixtures grow
+
+### Current status
+- `AppointmentServiceFilterTest` now includes descending tie-case coverage in addition to ascending tie-case coverage
+- Null-input filter tests use clearer naming aligned to service method parameters
+- Reusable ID-order assertions are in place and used by directional sorting tests
+
+### Next session — pick up here
+- Strengthen service input validation tests:
+  - `bookAppointment(null)` should throw `IllegalArgumentException`
+  - `cancelAppointment(null)` and `cancelAppointment("")` behavior should be specified and tested
+- Decide and document service contract details before Spring Boot:
+  - duplicate `appointmentId` policy
+  - case-sensitivity policy for `fiscalCode` and `doctorId`
+  - return-list mutability policy for filter methods
+- Introduce domain-specific exceptions (e.g., conflict/not-found) to prepare clean HTTP error mapping later
+- Add one workflow-style test (`book -> filter -> cancel -> filter`) as a bridge toward controller-level integration tests
