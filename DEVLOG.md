@@ -517,3 +517,61 @@ src/test/java/org/example/
   - return-list mutability policy for filter methods
 - Introduce domain-specific exceptions (e.g., conflict/not-found) to prepare clean HTTP error mapping later
 - Add one workflow-style test (`book -> filter -> cancel -> filter`) as a bridge toward controller-level integration tests
+
+---
+
+## Session 16 — July 29, 2026
+
+### What we built
+- Created a dedicated `exception` package at `src/main/java/org/example/exception/`
+- Created three domain-specific exception classes, each extending `RuntimeException`:
+  - `AppointmentConflictException` — thrown when a booking conflict is detected (duplicate appointment ID, or same doctor + same time slot)
+  - `AppointmentNotFoundException` — thrown when a cancellation targets an appointment ID that does not exist in the list
+  - `InvalidAppointmentException` — thrown for all null/blank input validation failures across `bookAppointment`, `cancelAppointment`, and the filter methods
+- Refactored `AppointmentService` to replace every `IllegalArgumentException` throw with the appropriate domain-specific exception
+
+### Key concepts learned
+- Each custom exception needs its own `.java` file — one file per class is a Java requirement
+- The `exception` package (`org.example.exception`) is the conventional location: keeps exceptions separate from `model` and `service`
+- Extend `RuntimeException` (unchecked) when you do not want callers to be forced to use `try/catch` — same practical behavior as `IllegalArgumentException`, but with a meaningful type name
+- `super(message)` in the constructor passes the message up to the Java exception engine so it appears in the stack trace
+- Domain-specific exception names make service contracts self-documenting: a caller reading `throws AppointmentConflictException` knows exactly what went wrong without reading the message string
+- Each exception type maps naturally to an HTTP status code later (conflict → 409, not found → 404, invalid input → 400)
+
+### All files location
+```
+src/main/java/org/example/
+    Main.java
+    model/
+        User.java         (abstract)
+        Citizen.java
+        Doctor.java
+        Staff.java
+        Appointment.java
+    service/
+        AppointmentService.java
+    exception/
+        AppointmentConflictException.java
+        AppointmentNotFoundException.java
+        InvalidAppointmentException.java
+
+src/test/java/org/example/
+    service/
+        AppointmentServiceBookingTest.java
+        AppointmentServiceCancellationTest.java
+        AppointmentServiceFilterTest.java
+```
+
+### Current status
+- `AppointmentService` now throws domain-specific exceptions instead of generic `IllegalArgumentException`
+- Existing tests still assert `IllegalArgumentException.class` in `assertThrows(...)` — this will cause test failures because the new exceptions extend `RuntimeException` directly, not `IllegalArgumentException`
+- Tests need to be updated to match the new exception types before the suite is green again
+
+### Next session — pick up here
+- Update `assertThrows` in all three test classes to use the correct specific exception type:
+  - `AppointmentServiceBookingTest`: conflict test → `AppointmentConflictException`
+  - `AppointmentServiceCancellationTest`: not-found test → `AppointmentNotFoundException`; null/blank ID test → `InvalidAppointmentException`
+  - `AppointmentServiceFilterTest`: null fiscal code/doctor ID tests → `InvalidAppointmentException`
+- Run `mvn test` and confirm all 17 tests pass with the updated exception types
+- Add one workflow-style integration test (`book → filter → cancel → filter`) as a bridge toward controller-level testing
+
