@@ -1,10 +1,12 @@
 package org.example.service;
 
+import org.example.exception.InvalidAppointmentException;
 import org.example.model.Appointment;
 import org.example.model.Citizen;
 import org.example.model.Doctor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -232,14 +234,14 @@ public class AppointmentServiceFilterTest {
     public void testGetAppointmentsForCitizen_NullFiscalCodeThrowsException() {
 
         //Assert: throws IllegalArgumentException when Citizen is null
-        assertThrows(IllegalArgumentException.class, () -> service.getAppointmentsForCitizen(null));
+        assertThrows(InvalidAppointmentException.class, () -> service.getAppointmentsForCitizen(null));
     }
 
     @Test
     public void testGetAppointmentsForDoctor_NullDoctorIdThrowsException() {
 
         //Assert: throws IllegalArgumentException when Doctor is null
-        assertThrows(IllegalArgumentException.class, () -> service.getAppointmentsForDoctor(null));
+        assertThrows(InvalidAppointmentException.class, () -> service.getAppointmentsForDoctor(null));
     }
 
 }

@@ -1,10 +1,15 @@
 package org.example.service;
 
+import org.example.exception.AppointmentNotFoundException;
+import org.example.exception.InvalidAppointmentException;
 import org.example.model.Appointment;
 import org.example.model.Citizen;
 import org.example.model.Doctor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,7 +49,7 @@ public class AppointmentServiceCancellationTest {
 
         //Assert: verify it was canceled
         assertEquals(1, service.getAppointments().size());
-        assertEquals("APPT001", service.getAppointments().get(0).getAppointmentId());
+        assertEquals("APPT001", service.getAppointments().getFirst().getAppointmentId());
 
     }
 
@@ -62,10 +67,22 @@ public class AppointmentServiceCancellationTest {
 
 
         //Act & Assert: cancel non-existing appointment & verify exception is thrown
-        assertThrows(IllegalArgumentException.class, () -> {
-            service.cancelAppointment("APPT003");
-        });
+        //Not Found Case
+        assertThrows(AppointmentNotFoundException.class, () ->
+                service.cancelAppointment("Non-existent-ID"));
+
         assertEquals(2, service.getAppointments().size());
 
     }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", " ", "  ", "\t"})//These are fed into the parameter one by one
+    public void testCancelAppointmentInvalidInputThrowsException(String invalidId) {
+        //Act and Assert:
+        //Null / Blank Input Cases
+        assertThrows(InvalidAppointmentException.class, () -> service.cancelAppointment(invalidId));
+
+    }
+
 }

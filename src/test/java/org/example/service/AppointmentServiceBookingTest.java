@@ -1,10 +1,13 @@
 package org.example.service;
 
+import org.example.exception.AppointmentConflictException;
+import org.example.exception.InvalidAppointmentException;
 import org.example.model.Appointment;
 import org.example.model.Citizen;
 import org.example.model.Doctor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,7 +43,7 @@ public class AppointmentServiceBookingTest {
 
         //Assert: verify it was added
         assertEquals(1, service.getAppointments().size());
-        assertEquals("APPT001", service.getAppointments().get(0).getAppointmentId());
+        assertEquals("APPT001", service.getAppointments().getFirst().getAppointmentId());
 
     }
 
@@ -50,14 +53,33 @@ public class AppointmentServiceBookingTest {
         Appointment appointment1 = new Appointment("APPT001", citizen1, doctor, LocalDateTime.of(2024, 6, 15, 10, 30), "Pfizer");
         service.bookAppointment(appointment1);
 
-        //Create a conflicting appointment (same doctor, same time)
+        //Create a conflicting appointment (SAME doctor, SAME time)
         Appointment appointment2 = new Appointment("APPT002", citizen2, doctor, LocalDateTime.of(2024, 6, 15, 10, 30), "Moderna");
 
         //Act & Assert: verify exception is thrown
-        assertThrows(IllegalArgumentException.class, () -> {
-            service.bookAppointment(appointment2);
-        });
+        assertThrows(AppointmentConflictException.class, () -> service.bookAppointment(appointment2));
     }
 
+    @Test
+    public void testBookAppointmentDuplicateIdThrowsException() {
+        //Arrange: book one appointment
+        Appointment appointment1 = new Appointment("APPT001", citizen1, doctor, LocalDateTime.of(2024, 6, 15, 10, 30), "Pfizer");
+        service.bookAppointment(appointment1);
+
+        //Create Conflicting appointment (different time, SAME ID)
+        Appointment appointment2 = new Appointment("appt001", citizen1, doctor, LocalDateTime.of(2024, 6, 15, 11, 30), "Pfizer");
+
+        //Act and Assert:
+        assertThrows(AppointmentConflictException.class, () -> service.bookAppointment(appointment2));
+    }
+
+    @Test
+    public void testBookAppointmentNullThrowsException() {
+        //Act and Assert:
+        assertThrows(InvalidAppointmentException.class, () -> service.bookAppointment(null));
+    }
 
 }
+
+
+
