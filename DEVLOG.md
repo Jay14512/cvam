@@ -734,9 +734,46 @@ src/test/java/org/example/
   improves readability
 
 
+  
 
+## Session 18 — July 31, 2026
 
+### What we clarified
 
+- Re-checked the pre-Spring checklist in `Info.md` and confirmed sections 1-4 are complete.
+- Confirmed model-level readiness is in place for the current codebase:
+    - constructor validations are present across model classes
+    - model fields use `private final`
+    - no setters in model classes
+- Confirmed service behavior assumptions are stable in code (`equalsIgnoreCase` for ID/fiscal-code comparisons, `LocalDate`/`LocalDateTime` usage).
 
+### Decision made
 
+- Green light to start Spring Boot work.
+- Chosen approach: create **CVAM 2.0** as a separate Spring Boot app for side-by-side comparison with the current Core Java implementation.
+
+### CVAM 2.0 implementation plan (thin slices)
+
+1. Create Spring Boot skeleton app + health endpoint.
+2. Add appointment REST endpoints around current service contracts.
+3. Add centralized exception mapping with `@ControllerAdvice`.
+4. Add endpoint tests (`@WebMvcTest` / targeted integration tests).
+5. Introduce persistence with JPA/Hibernate only after endpoint behavior is stable (H2 first).
+
+### Key concepts reinforced
+
+- Keep API contracts stable while changing implementation internals.
+- Migrate in vertical slices to reduce risk and keep behavior testable.
+- Side-by-side projects are a strong learning strategy for understanding Core Java vs Spring Boot/JPA responsibilities.
+
+### Current status
+
+- Core Java CVAM remains the functional baseline/reference.
+- Spring Boot readiness checks are complete; Spring-specific build-out is the next phase.
+
+### Next session — pick up here
+
+- Scaffold `CVAM-2.0` project structure.
+- Add first endpoint slice (`health` + first appointment endpoint).
+- Port one existing service test idea into an HTTP-level test.
 
